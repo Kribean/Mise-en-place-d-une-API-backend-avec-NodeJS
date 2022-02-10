@@ -10,7 +10,7 @@ mongoose.connect('mongodb+srv://zophi972:Zophia972_@cluster0.9dvn8.mongodb.net/P
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
   const userRoutes = require('./routes/user');
-  const stuffRoutes = require('./routes/stuff');
+  const sauceRoutes = require('./routes/sauce');
 
   const app = express();
   app.use(express.json());
@@ -22,7 +22,7 @@ mongoose.connect('mongodb+srv://zophi972:Zophia972_@cluster0.9dvn8.mongodb.net/P
     next();
   });
 
-  app.use('/api/sauces',stuffRoutes);
+  app.use('/api/sauces',sauceRoutes);
   console.log('hello');
   app.use('/api/auth', userRoutes);
   app.use('/images', express.static(path.join(__dirname, 'images')));

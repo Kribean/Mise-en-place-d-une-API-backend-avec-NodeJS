@@ -58,47 +58,48 @@ console.log('fin')
               console.log(tab);
               tabId = tab.split(',');
               tabId = tabId.filter((x)=>{return x!=id})
-                console.log('hello voici le resultat de la fonction');
-                console.log(tabId.join(','));
-              return tabId.join(',')
+              return [tabId.join(','),tab.split(',').includes(id)]
 
           };
           
           if(req.body.like==1)
           {
-              if (obj.dislikes>0)
-              {
-                  console.log(obj.usersLiked);
-                  console.log(req.body.userId);
-                  console.log(detectUser(obj.usersLiked,req.body.userId));
-                  console.log('kamui');
-                sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId)+','+req.body.userId,
-                    usersDisliked:detectUser(obj.usersDisliked,req.body.userId),
-                     likes:obj.likes+1,
-                     dislikes:obj.dislikes-1};
-              }else{
-                sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId)+','+req.body.userId,
-                     usersDisliked:detectUser(obj.usersDisliked,req.body.userId),
-                     likes:obj.likes+1,
-                     dislikes:0}; 
-              }
+
+            sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId)[0]+','+req.body.userId,
+            likes:obj.likes+1,};
+
             
           }else if(req.body.like==-1) {
-            if (obj.likes>0)
-            {
-              sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId),
-                usersDisliked:detectUser(obj.usersDisliked,req.body.userId)+','+req.body.userId,
-                likes:obj.likes-1,
+
+              sauceObject = {
+                usersDisliked:detectUser(obj.usersDisliked,req.body.userId)[0]+','+req.body.userId,
                 dislikes:obj.dislikes+1};
-            }else{
-              sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId),
-                usersDisliked:detectUser(obj.usersDisliked,req.body.userId)+','+req.body.userId,
-                likes:0,
-                dislikes:obj.dislikes+1}; 
-            }
+
           
 
+          }else if(req.body.like==0)
+          {
+            console.log('000000000000000tttt');
+            console.log(detectUser(obj.usersLiked,req.body.userId)[1]);
+            console.log(detectUser(obj.usersLiked,req.body.userId)[0]);
+            console.log(req.body.userId);
+
+            if(detectUser(obj.usersLiked,req.body.userId)[1])
+            {
+              
+              sauceObject = {usersLiked:detectUser(obj.usersLiked,req.body.userId)[0],
+              likes:obj.likes-1,};
+
+            }else if(detectUser(obj.usersDisliked,req.body.userId)[1])
+            {
+              sauceObject = {
+                usersDisliked:detectUser(obj.usersDisliked,req.body.userId)[0],
+                dislikes:obj.dislikes-1};
+
+            }
+
           }
+
           Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
           .then(() => res.status(200).json({ message: 'Objet modifié !'}))
           .catch(error => res.status(400).json({ error }));
