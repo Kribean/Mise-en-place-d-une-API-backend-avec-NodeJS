@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const jwt = require('jsonwebtoken');
 
 module.exports = (req,res,next) =>
@@ -7,19 +9,9 @@ module.exports = (req,res,next) =>
         
         const token = req.headers.authorization.split(' ')[1];
         
-        const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        
-        const userId = decodedToken.userId;
-        
-        req.auth = { userId }; 
-        
-        if(req.body.userId && req.body.userId !== userId){
-            console.log('hello it s bad');
-            throw 'User ID non valable'
-        }else{
-            console.log('hello it s good');
-            next();
-        }
+        req.token = jwt.verify(token, process.env.SECRET_KEY);
+        next();
+
 
     } catch(error){
         res.status(401).json({error: error | 'Requete non authentifié'})

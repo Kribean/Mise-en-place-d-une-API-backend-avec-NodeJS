@@ -1,9 +1,12 @@
+//utilisation des variables d'environnements (permet une meilleure gestion sécuritaire)
+require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 
-mongoose.connect('mongodb+srv://zophi972:Zophia972_@cluster0.9dvn8.mongodb.net/Project6?retryWrites=true&w=majority',
+//connection à la base de données
+mongoose.connect(process.env.DATABASE_ACCESS,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -15,15 +18,15 @@ mongoose.connect('mongodb+srv://zophi972:Zophia972_@cluster0.9dvn8.mongodb.net/P
   const app = express();
   app.use(express.json());
 
+  //définition des accès possible via le front
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
   });
-
-  app.use('/api/sauces',sauceRoutes);
-  console.log('hello');
-  app.use('/api/auth', userRoutes);
-  app.use('/images', express.static(path.join(__dirname, 'images')));
+//connexion aux routes
+  app.use('/api/sauces',sauceRoutes); //routes vers les actions dédiées aux sauces
+  app.use('/api/auth', userRoutes); //routes vers les actions dédiées à l'utilisateur
+  app.use('/images', express.static(path.join(__dirname, 'images'))); //permet de l'enregistrement des images dans le dossier image
   module.exports = app;
